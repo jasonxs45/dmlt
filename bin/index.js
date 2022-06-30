@@ -7,7 +7,7 @@ import deletejs from '../commands/delete.js'
 import list from '../commands/list.js'
 import init from '../commands/init.js'
 
-const packagejson = importJson('./package.json')
+const packagejson = importJson('../package.json')
 
 
 program.usage('<command>')

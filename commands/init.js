@@ -8,7 +8,8 @@ import download from 'download-git-repo'
 import symbols from 'log-symbols'
 import chalk from 'chalk'
 import importJson from '../utils/importJson.js'
-const templateList = importJson('./template.json')
+const templateList = importJson('../template.json')
+
 chalk.level = 1
 
 const spinner = ora('Downloading...')
@@ -40,7 +41,6 @@ let question = [
           return true
         }
       } catch (error) {
-        console.log(error)
         return false
       }
     }
@@ -50,7 +50,7 @@ let question = [
     choices: ['dumi', 'dumi&lerna'],
     name: 'template',
     message: '请选择模板名称',
-    when: answers => answers.override
+    when: answers => answers.override === undefined || answers.override
   }
 ]
 
@@ -86,7 +86,8 @@ export default async (tempName, proName) => {
 
   destination = answers.destination ? answers.destination.trim() : ''
 
-  const temporaryDir = `.__temp.${destination}.${Date.now()}`
+  // 如果输入目录或者目录已存在
+  const temporaryDir = destination ? `./.__temp.${destination}.${Date.now()}` : './'
 
   if (answers.template) {
     const url = templateList[answers.template]
@@ -95,7 +96,7 @@ export default async (tempName, proName) => {
     // 出现加载图标
     spinner.start()
 
-    download(`direct:${url}`, `./${temporaryDir}`, { clone: true }, (err) => {
+    download(`direct:${url}`, `${temporaryDir}`, { clone: true }, (err) => {
       if (err) {
         spinner.fail()
         console.log(chalk.red(symbols.error), chalk.red(`Generation failed. ${err}`))
@@ -104,8 +105,10 @@ export default async (tempName, proName) => {
       }
       // 结束加载图标
       spinner.succeed()
-      fs.rmdirSync(destination, { recursive: true, force: true })
-      fs.renameSync(temporaryDir, destination)
+      if (destination) {
+        fs.rmdirSync(destination, { recursive: true, force: true })
+        fs.renameSync(temporaryDir, destination)
+      }
       console.log(chalk.green(symbols.success), chalk.green('Generation completed!'))
       console.log('\n To get started')
       console.log(`\n    cd ${destination} \n`)

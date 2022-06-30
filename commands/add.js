@@ -10,7 +10,7 @@ import writeFile from '../utils/writeFile.js'
 
 chalk.level = 1
 
-const templateList = importJson('./template.json')
+const templateList = importJson('../template.json')
 
 const question = [
   {
