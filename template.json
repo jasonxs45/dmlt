@@ -1,0 +1,4 @@
+{
+    "dumi": "https://github.com/umijs/dumi-template.git#main",
+    "dumi&lerna": "https://github.com/jasonxs45/dumi-lerna-template.git#master"
+}
